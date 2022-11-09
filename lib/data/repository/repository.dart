@@ -8,6 +8,6 @@ import 'package:pokedex/data/model/pokemon_model.dart';
 abstract class Repository {
 
   FutureOr<PokemonModel?> getDataPokemon(int offset, int limit, String namaPokemon);
-  FutureOr<DetailPokemonModel?> getDetailPokemon(String id);
-  FutureOr<List<DeksripsiPokemonModel?>> getDeksripsiPokemon(String id);
+  FutureOr<DetailPokemonModel> getDetailPokemon(String id);
+  FutureOr<DeskripsiPokemonModel> getDeksripsiPokemon(String id);
 }

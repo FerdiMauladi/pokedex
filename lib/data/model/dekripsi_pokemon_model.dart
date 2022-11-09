@@ -1,9 +1,9 @@
-class DeksripsiPokemonModel {
+class DeskripsiPokemonModel {
   List<FlavorTextEntries>? flavorTextEntries;
 
-  DeksripsiPokemonModel({this.flavorTextEntries});
+  DeskripsiPokemonModel({this.flavorTextEntries});
 
-  DeksripsiPokemonModel.fromJson(Map<String, dynamic> json) {
+  DeskripsiPokemonModel.fromJson(Map<String, dynamic> json) {
     if (json['flavor_text_entries'] != null) {
       flavorTextEntries = <FlavorTextEntries>[];
       json['flavor_text_entries'].forEach((v) {
@@ -69,3 +69,4 @@ class Language {
     return data;
   }
 }
+

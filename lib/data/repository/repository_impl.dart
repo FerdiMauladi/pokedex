@@ -12,9 +12,11 @@ class RepositoryImpl implements Repository {
   final network = Get.find<NetworkCore>();
 
   @override
-  FutureOr<PokemonModel?> getDataPokemon(int offset, int limit, String namaPokemon) async {
+  FutureOr<PokemonModel?> getDataPokemon(
+      int offset, int limit, String namaPokemon) async {
     try {
-      var response = await network.dio.get("/pokemon/$namaPokemon", queryParameters: {
+      var response =
+          await network.dio.get("/pokemon/$namaPokemon", queryParameters: {
         "offset": offset,
         "limit": limit,
       });
@@ -26,31 +28,25 @@ class RepositoryImpl implements Repository {
   }
 
   @override
-  FutureOr<List<DeksripsiPokemonModel?>> getDeksripsiPokemon(String id) async {
+  FutureOr<DeskripsiPokemonModel> getDeksripsiPokemon(String id) async {
     try {
       var response = await network.dio.get("/pokemon-species/$id");
-      List listDekripsi = response.data;
-      List<DeksripsiPokemonModel> listData =
-      listDekripsi.map((deksripsi) => DeksripsiPokemonModel.fromJson(deksripsi)).toList();
-      print(listData);
-      return listData;
+      return DeskripsiPokemonModel.fromJson(response.data);
     } on DioError catch (e) {
       print(e.error);
-      return [];
+      return e.error;
     }
   }
 
   @override
-  FutureOr<DetailPokemonModel?> getDetailPokemon(String id) async {
+  FutureOr<DetailPokemonModel> getDetailPokemon(String id) async {
     try {
       var response = await network.dio.get("/pokemon/$id");
+      print(DetailPokemonModel.fromJson(response.data));
       return DetailPokemonModel.fromJson(response.data);
     } on DioError catch (e) {
       print(e.error);
-      return null;
+      return e.error;
     }
   }
-
-
-
 }

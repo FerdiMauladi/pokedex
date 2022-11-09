@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:pokedex/const/color.dart';
+import 'package:pokedex/helper/extension_method.dart';
 import 'package:pokedex/screen/detail/detail_controller.dart';
 
 class DetailScreen extends StatelessWidget {
@@ -12,15 +14,29 @@ class DetailScreen extends StatelessWidget {
     return GetBuilder<DetailController>(
       init: DetailController(),
       builder: (controller) {
+        if (controller.state == DetailViewState.loading) {
+          return Scaffold(
+            backgroundColor: controller.detailPokemon?.types?[0].type?.name
+                ?.toPokemonTypeColor(),
+            body: Container(
+              alignment: Alignment.center,
+              child: const CircularProgressIndicator(
+                color: Colors.yellow,
+              ),
+            ),
+          );
+        }
         return Scaffold(
-          backgroundColor: Colors.red,
+          backgroundColor: controller.detailPokemon?.types?[0].type?.name
+              ?.toPokemonTypeColor(),
           appBar: AppBar(
-            backgroundColor: Colors.red,
+            backgroundColor: controller.detailPokemon?.types?[0].type?.name
+                ?.toPokemonTypeColor(),
             leading: GestureDetector(
               onTap: () {
                 Navigator.pop(context);
               },
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_back,
                 color: Colors.white,
               ),
@@ -30,15 +46,17 @@ class DetailScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'Charizard',
-                  style: TextStyle(
+                  '${controller.detailPokemon?.forms?[0].name?[0].toUpperCase()}${controller.detailPokemon?.forms?[0].name?.substring(1)}' ??
+                      "-",
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 24,
                   ),
                 ),
                 Text(
-                  '#001',
-                  style: TextStyle(
+                '#${controller.formatter.format(int.parse(controller.dataArgument['id']))}' ??
+                "-",
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 20,
                   ),
@@ -76,57 +94,44 @@ class DetailScreen extends StatelessWidget {
                           bottom: 4.0,
                         ),
                         alignment: Alignment.centerRight,
-                        child: Icon(
+                        child: const Icon(
                           Icons.favorite_border_outlined,
                           color: Colors.redAccent,
                           size: 40,
                         ),
                       ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Chip(
-                            label: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                'Fire',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
+                      Expanded(
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          scrollDirection: Axis.horizontal,
+                          itemCount: controller.detailPokemon?.types?.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              margin: const EdgeInsets.all(8.0),
+                              child: Chip(
+                                label: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Text(
+                                    '${controller.detailPokemon?.types?[index].type?.name?[0].toUpperCase()}${controller.detailPokemon?.types?[index].type?.name?.substring(1)}' ?? '-',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                8.0,
-                              ),
-                            ),
-                            backgroundColor: Colors.orange,
-                          ),
-                          SizedBox(
-                            width: 15.0,
-                          ),
-                          Chip(
-                            label: Padding(
-                              padding: const EdgeInsets.all(4.0),
-                              child: Text(
-                                'Flying',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(
+                                    8.0,
+                                  ),
                                 ),
+                                backgroundColor: controller.detailPokemon?.types?[index].type?.name
+                                    ?.toPokemonTypeColor(),
                               ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                8.0,
-                              ),
-                            ),
-                            backgroundColor: Colors.lightBlueAccent,
-                          ),
-                        ],
+                            );
+                          },
+                        ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15.0,
                       ),
                       Container(
@@ -134,13 +139,14 @@ class DetailScreen extends StatelessWidget {
                         child: Text(
                           'About',
                           style: TextStyle(
-                            color: Colors.orange,
+                            color: controller.detailPokemon?.types?[0].type?.name
+                                ?.toPokemonTypeColor(),
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 15.0,
                       ),
                       Row(
@@ -157,22 +163,22 @@ class DetailScreen extends StatelessWidget {
                                     SvgPicture.asset(
                                       'assets/icon/ic_weight.svg',
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10.0,
                                     ),
                                     Text(
-                                      '90.5 kg',
-                                      style: TextStyle(
+                                      '${controller.detailPokemon?.weight.toString()} kg' ?? '-',
+                                      style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 14.0,
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 14.0,
                                 ),
-                                Text(
+                                const Text(
                                   'Weight',
                                   style: TextStyle(
                                     color: Colors.black,
@@ -182,7 +188,7 @@ class DetailScreen extends StatelessWidget {
                               ],
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             height: 70,
                             child: VerticalDivider(
                               thickness: 2,
@@ -200,22 +206,22 @@ class DetailScreen extends StatelessWidget {
                                     SvgPicture.asset(
                                       'assets/icon/ic_height.svg',
                                     ),
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 10.0,
                                     ),
                                     Text(
-                                      '1.7 m',
-                                      style: TextStyle(
+                                      '${controller.detailPokemon?.height.toString()} m' ?? '-',
+                                      style: const TextStyle(
                                         color: Colors.black,
                                         fontSize: 14.0,
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 14.0,
                                 ),
-                                Text(
+                                const Text(
                                   'Height',
                                   style: TextStyle(
                                     color: Colors.black,
@@ -227,31 +233,34 @@ class DetailScreen extends StatelessWidget {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 16.0,
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10.0),
                         child: Text(
-                          'Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally. Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally. hen expelling a blast of super hot fire, the red flame at the tip of its tail burns more intensely.',
+                          controller.flavourText.length == 0
+                              ? '-'
+                              : '${controller.flavourText[0]?.replaceAll('\n', ' ').replaceAll('\f', ' ')}${controller.flavourText[1]?.replaceAll('\n', ' ').replaceAll('\f', ' ')}${controller.flavourText[2]?.replaceAll('\n', ' ').replaceAll('\f', ' ')}',
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 14,
                           ),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10.0,
                       ),
                       Text(
                         'Base Stats',
                         style: TextStyle(
-                          color: Colors.orange,
+                          color: controller.detailPokemon?.types?[0].type?.name
+                              ?.toPokemonTypeColor(),
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 10.0,
                       ),
                       Padding(
@@ -270,13 +279,14 @@ class DetailScreen extends StatelessWidget {
                                   child: Text(
                                     'ATK',
                                     style: TextStyle(
-                                      color: Colors.orange,
+                                      color: controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor(),
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                   child: VerticalDivider(
                                     thickness: 1,
@@ -285,24 +295,26 @@ class DetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '080',
-                                  style: TextStyle(
+                                  controller.detailPokemon?.stats?[1].baseStat.toString() ?? '-',
+                                  style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10.0,
                                 ),
                                 SizedBox(
                                   width: Get.width * 0.6,
                                   child: LinearProgressIndicator(
-                                    value: 80 / 255,
+                                    value: controller.detailPokemon!.stats![1].baseStat! / 255,
                                     backgroundColor:
-                                        Colors.orange.withOpacity(0.4),
-                                    valueColor: const AlwaysStoppedAnimation(
-                                        Colors.orange),
+                                    controller.detailPokemon?.types?[0].type?.name
+                                        ?.toPokemonTypeColor().withOpacity(0.4),
+                                    valueColor: AlwaysStoppedAnimation(
+                                      controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor()),
                                   ),
                                 ),
                               ],
@@ -313,13 +325,14 @@ class DetailScreen extends StatelessWidget {
                                   child: Text(
                                     'DEF',
                                     style: TextStyle(
-                                      color: Colors.orange,
+                                      color: controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor(),
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                   child: VerticalDivider(
                                     thickness: 1,
@@ -328,24 +341,26 @@ class DetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '080',
-                                  style: TextStyle(
+                                  controller.detailPokemon?.stats?[2].baseStat.toString() ?? '-',
+                                  style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10.0,
                                 ),
                                 SizedBox(
                                   width: Get.width * 0.6,
                                   child: LinearProgressIndicator(
-                                    value: 80 / 255,
+                                    value: controller.detailPokemon!.stats![2].baseStat! / 255,
                                     backgroundColor:
-                                        Colors.orange.withOpacity(0.4),
-                                    valueColor: const AlwaysStoppedAnimation(
-                                        Colors.orange),
+                                    controller.detailPokemon?.types?[0].type?.name
+                                        ?.toPokemonTypeColor().withOpacity(0.4),
+                                    valueColor: AlwaysStoppedAnimation(
+                                      controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor()),
                                   ),
                                 ),
                               ],
@@ -356,13 +371,14 @@ class DetailScreen extends StatelessWidget {
                                   child: Text(
                                     'HP',
                                     style: TextStyle(
-                                      color: Colors.orange,
+                                      color: controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor(),
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                   child: VerticalDivider(
                                     thickness: 1,
@@ -371,24 +387,26 @@ class DetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '080',
-                                  style: TextStyle(
+                                  controller.detailPokemon?.stats?[0].baseStat.toString() ?? '-',
+                                  style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10.0,
                                 ),
                                 SizedBox(
                                   width: Get.width * 0.6,
                                   child: LinearProgressIndicator(
-                                    value: 80 / 255,
+                                    value: controller.detailPokemon!.stats![0].baseStat! / 255,
                                     backgroundColor:
-                                        Colors.orange.withOpacity(0.4),
-                                    valueColor: const AlwaysStoppedAnimation(
-                                        Colors.orange),
+                                    controller.detailPokemon?.types?[0].type?.name
+                                        ?.toPokemonTypeColor().withOpacity(0.4),
+                                    valueColor: AlwaysStoppedAnimation(
+                                        controller.detailPokemon?.types?[0].type?.name
+                                            ?.toPokemonTypeColor()),
                                   ),
                                 ),
                               ],
@@ -399,13 +417,14 @@ class DetailScreen extends StatelessWidget {
                                   child: Text(
                                     'SP-ATK',
                                     style: TextStyle(
-                                      color: Colors.orange,
+                                      color: controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor(),
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                   child: VerticalDivider(
                                     thickness: 1,
@@ -414,14 +433,14 @@ class DetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '080',
-                                  style: TextStyle(
+                                  controller.detailPokemon?.stats?[3].baseStat.toString() ?? '-',
+                                  style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10.0,
                                 ),
                                 SizedBox(
@@ -429,9 +448,11 @@ class DetailScreen extends StatelessWidget {
                                   child: LinearProgressIndicator(
                                     value: 80 / 255,
                                     backgroundColor:
-                                        Colors.orange.withOpacity(0.4),
-                                    valueColor: const AlwaysStoppedAnimation(
-                                        Colors.orange),
+                                    controller.detailPokemon?.types?[0].type?.name
+                                        ?.toPokemonTypeColor().withOpacity(0.4),
+                                    valueColor: AlwaysStoppedAnimation(
+                                        controller.detailPokemon?.types?[0].type?.name
+                                            ?.toPokemonTypeColor()),
                                   ),
                                 ),
                               ],
@@ -442,13 +463,14 @@ class DetailScreen extends StatelessWidget {
                                   child: Text(
                                     'SP-DEF',
                                     style: TextStyle(
-                                      color: Colors.orange,
+                                      color: controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor(),
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                   child: VerticalDivider(
                                     thickness: 1,
@@ -457,24 +479,26 @@ class DetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '080',
-                                  style: TextStyle(
+                                  controller.detailPokemon?.stats?[4].baseStat.toString() ?? '-',
+                                  style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10.0,
                                 ),
                                 SizedBox(
                                   width: Get.width * 0.6,
                                   child: LinearProgressIndicator(
-                                    value: 80 / 255,
+                                    value: controller.detailPokemon!.stats![4].baseStat! / 255,
                                     backgroundColor:
-                                        Colors.orange.withOpacity(0.4),
-                                    valueColor: const AlwaysStoppedAnimation(
-                                        Colors.orange),
+                                    controller.detailPokemon?.types?[0].type?.name
+                                        ?.toPokemonTypeColor().withOpacity(0.4),
+                                    valueColor: AlwaysStoppedAnimation(
+                                        controller.detailPokemon?.types?[0].type?.name
+                                            ?.toPokemonTypeColor()),
                                   ),
                                 ),
                               ],
@@ -485,13 +509,14 @@ class DetailScreen extends StatelessWidget {
                                   child: Text(
                                     'SPD',
                                     style: TextStyle(
-                                      color: Colors.orange,
+                                      color: controller.detailPokemon?.types?[0].type?.name
+                                          ?.toPokemonTypeColor(),
                                       fontSize: 12.0,
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   height: 20,
                                   child: VerticalDivider(
                                     thickness: 1,
@@ -500,24 +525,26 @@ class DetailScreen extends StatelessWidget {
                                   ),
                                 ),
                                 Text(
-                                  '080',
-                                  style: TextStyle(
+                                  controller.detailPokemon?.stats?[5].baseStat.toString() ?? '-',
+                                  style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 12.0,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
-                                SizedBox(
+                                const SizedBox(
                                   width: 10.0,
                                 ),
                                 SizedBox(
                                   width: Get.width * 0.6,
                                   child: LinearProgressIndicator(
-                                    value: 80 / 255,
+                                    value: controller.detailPokemon!.stats![5].baseStat! / 255,
                                     backgroundColor:
-                                        Colors.orange.withOpacity(0.4),
-                                    valueColor: const AlwaysStoppedAnimation(
-                                        Colors.orange),
+                                    controller.detailPokemon?.types?[0].type?.name
+                                        ?.toPokemonTypeColor().withOpacity(0.4),
+                                    valueColor: AlwaysStoppedAnimation(
+                                        controller.detailPokemon?.types?[0].type?.name
+                                            ?.toPokemonTypeColor()),
                                   ),
                                 ),
                               ],

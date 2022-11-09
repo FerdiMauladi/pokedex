@@ -103,8 +103,7 @@ class HomeScreen extends StatelessWidget {
                                           .last
                                           .replaceAll("/", ""),
                                     ),
-                                  ) ??
-                                  "-"),
+                                  )),
                             ),
                             Positioned(
                               top: 15,
@@ -112,20 +111,9 @@ class HomeScreen extends StatelessWidget {
                               left: 0,
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                // child: Image.network(
-                                //   "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${item.url?.split("pokemon").last.replaceAll("/", "")}.png",
-                                //   loadingBuilder:
-                                //       (context, child, loadingProgress) {
-                                //     if (loadingProgress == null) {
-                                //       return child;
-                                //     }
-                                //     return Lottie.asset(
-                                //         "assets/lottie/pokeball_lottie.json");
-                                //   },
-                                // ),
                                 child: CachedNetworkImage(
                                   imageUrl:
-                                      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${item?.url?.split("pokemon").last.replaceAll("/", "")}.png",
+                                      "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${item.url?.split("pokemon").last.replaceAll("/", "")}.png",
                                   progressIndicatorBuilder:
                                       (context, url, progress) {
                                     return Lottie.asset(
@@ -152,8 +140,7 @@ class HomeScreen extends StatelessWidget {
                                 child: Padding(
                                   padding: const EdgeInsets.all(8.0),
                                   child: Text(
-                                    '${item.name?[0].toUpperCase()}${item.name?.substring(1)}' ??
-                                        "-",
+                                    '${item.name?[0].toUpperCase()}${item.name?.substring(1)}',
                                     style: const TextStyle(
                                       color: Colors.white,
                                     ),
